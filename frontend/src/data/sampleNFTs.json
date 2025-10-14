@@ -1,0 +1,80 @@
+[
+  {
+    "id": "1",
+    "name": "Cool Ape #1234",
+    "image": "/images/img.png",
+    "description": "A rare blue ape with golden eyes",
+    "collection": "Cool Apes",
+    "rating": "legit",
+    "userVotes": {
+      "legit": 245,
+      "suspicious": 12,
+      "scam": 3
+    }
+  },
+  {
+    "id": "2",
+    "name": "Suspicious Pixel #5678",
+    "image": "/images/img.png",
+    "description": "Pixel art character with questionable origins",
+    "collection": "Pixel World",
+    "rating": "suspicious",
+    "userVotes": {
+      "legit": 45,
+      "suspicious": 89,
+      "scam": 156
+    }
+  },
+  {
+    "id": "3",
+    "name": "Fake Diamond #9999",
+    "image": "/images/img.png",
+    "description": "Claimed to be rare but actually mass minted",
+    "collection": "Diamond Collection",
+    "rating": "scam",
+    "userVotes": {
+      "legit": 8,
+      "suspicious": 23,
+      "scam": 234
+    }
+  },
+  {
+    "id": "4",
+    "name": "Art Masterpiece #001",
+    "image": "/images/img.png",
+    "description": "Verified artwork from renowned digital artist",
+    "collection": "Digital Art Gallery",
+    "rating": "legit",
+    "userVotes": {
+      "legit": 456,
+      "suspicious": 5,
+      "scam": 1
+    }
+  },
+  {
+    "id": "5",
+    "name": "Unknown Origin #777",
+    "image": "/images/img.png",
+    "description": "NFT with unclear provenance and metadata",
+    "collection": "Mystery Box",
+    "rating": "suspicious",
+    "userVotes": {
+      "legit": 34,
+      "suspicious": 78,
+      "scam": 45
+    }
+  },
+  {
+    "id": "6",
+    "name": "Pump & Dump #0001",
+    "image": "/images/img.png",
+    "description": "Classic pump and dump scheme NFT",
+    "collection": "Rug Pull Collection",
+    "rating": "scam",
+    "userVotes": {
+      "legit": 2,
+      "suspicious": 8,
+      "scam": 189
+    }
+  }
+]
