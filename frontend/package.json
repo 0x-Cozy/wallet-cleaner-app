@@ -15,6 +15,8 @@
     "react-icons": "^5.5.0"
   },
   "devDependencies": {
+    "@mysten/dapp-kit": "^0.19.1",
+    "@mysten/sui": "^1.39.1",
     "@eslint/js": "^9.36.0",
     "@types/node": "^24.7.2",
     "@types/react": "^19.1.16",

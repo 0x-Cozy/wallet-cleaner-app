@@ -1,17 +1,23 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { NFT, NFTRating, HiddenNFT } from './types/nft';
 import sampleNFTs from './data/sampleNFTs.json';
+import { useCurrentAccount } from '@mysten/dapp-kit';
+import { useWalletNFTs } from './hooks/useWalletNFTs';
 import Header from './components/Header';
 import NFTGrid from './components/NFTGrid';
 import HiddenNFTsPanel from './components/HiddenNFTsPanel';
 import VotingModal from './components/VotingModal';
 
 function App() {
+  const account = useCurrentAccount();
+  const { nfts: walletNFTs, loading, error, refetch } = useWalletNFTs();
   const [nfts, setNfts] = useState<NFT[]>(sampleNFTs as NFT[]);
   const [hiddenNFTs, setHiddenNFTs] = useState<HiddenNFT[]>([]);
   const [selectedNFT, setSelectedNFT] = useState<NFT | null>(null);
   const [showVotingModal, setShowVotingModal] = useState(false);
   const [showHiddenPanel, setShowHiddenPanel] = useState(false);
+
+  const displayNFTs = account ? walletNFTs : nfts;
 
   const handleVote = (nftId: string, rating: NFTRating) => {
     setNfts(prev => prev.map(nft => 
@@ -42,7 +48,6 @@ function App() {
 
   const handleBurn = (nft: NFT) => {
     setNfts(prev => prev.filter(n => n.id !== nft.id));
-    // In a real app, this would call the burn function
     console.log('Burning NFT:', nft);
   };
 
@@ -64,11 +69,14 @@ function App() {
       <Header 
         onToggleHiddenPanel={() => setShowHiddenPanel(!showHiddenPanel)}
         hiddenCount={hiddenNFTs.length}
+        onRefresh={refetch}
+        loading={loading}
+        error={error}
       />
       
       <main className="container mx-auto px-4 py-8">
         <NFTGrid 
-          nfts={nfts}
+          nfts={displayNFTs}
           onVote={openVotingModal}
           onHide={handleHide}
           onBurn={handleBurn}

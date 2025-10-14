@@ -1,12 +1,16 @@
 import React from 'react';
-import { FaEye, FaWallet } from 'react-icons/fa';
+import { FaEye, FaSpinner } from 'react-icons/fa';
+import { ConnectButton } from '@mysten/dapp-kit';
 
 interface HeaderProps {
   onToggleHiddenPanel: () => void;
   hiddenCount: number;
+  onRefresh?: () => void;
+  loading?: boolean;
+  error?: string | null;
 }
 
-const Header: React.FC<HeaderProps> = ({ onToggleHiddenPanel, hiddenCount }) => {
+const Header: React.FC<HeaderProps> = ({ onToggleHiddenPanel, hiddenCount, onRefresh, loading, error }) => {
   return (
     <header className="bg-black/20 backdrop-blur-sm border-b border-white/10">
       <div className="container mx-auto px-4 py-4">
@@ -33,11 +37,24 @@ const Header: React.FC<HeaderProps> = ({ onToggleHiddenPanel, hiddenCount }) => 
               </span>
             </button>
             
-            <button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-2 rounded-lg transition-all duration-200 font-medium flex items-center space-x-2">
-              <FaWallet />
-              <span>Connect Wallet</span>
-            </button>
-          </div>
+            {error && (
+              <div className="text-red-400 text-sm">
+                {error}
+              </div>
+            )}
+            
+            {onRefresh && (
+              <button
+                onClick={onRefresh}
+                disabled={loading}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-all duration-200 disabled:opacity-50 flex items-center space-x-2"
+              >
+                {loading ? <FaSpinner className="animate-spin" /> : 'Refresh NFTs'}
+              </button>
+            )}
+            
+            <ConnectButton />
+            </div>
         </div>
       </div>
     </header>
