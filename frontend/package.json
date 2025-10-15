@@ -10,14 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mysten/create-dapp": "^0.5.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-icons": "^5.5.0"
   },
   "devDependencies": {
-    "@mysten/dapp-kit": "^0.19.1",
-    "@mysten/sui": "^1.39.1",
     "@eslint/js": "^9.36.0",
+    "@mysten/dapp-kit": "^0.19.2",
+    "@mysten/sui": "^1.40.0",
     "@types/node": "^24.7.2",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",

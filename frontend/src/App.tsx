@@ -8,6 +8,7 @@ import NFTGrid from './components/NFTGrid';
 import HiddenNFTsPanel from './components/HiddenNFTsPanel';
 import VotingModal from './components/VotingModal';
 
+
 function App() {
   const account = useCurrentAccount();
   const { nfts: walletNFTs, loading, error, refetch } = useWalletNFTs();
