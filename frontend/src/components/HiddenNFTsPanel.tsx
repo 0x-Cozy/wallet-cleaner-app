@@ -8,14 +8,6 @@ interface HiddenNFTsPanelProps {
 }
 
 const HiddenNFTsPanel = ({ hiddenNFTs, onRemove, onClose }: HiddenNFTsPanelProps) => {
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(date);
-  };
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
