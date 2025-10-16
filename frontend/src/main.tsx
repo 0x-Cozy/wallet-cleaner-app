@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import App from "./App.tsx";
 import { getFullnodeUrl } from "@mysten/sui/client";
 import "./index.css";
-import {ConnectButton} from "@mysten/dapp-kit";
 
 
 const queryClient = new QueryClient();

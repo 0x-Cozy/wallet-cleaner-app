@@ -21,6 +21,13 @@ export interface HiddenNFT {
   hiddenAt: Date;
 }
 
+export interface HiddenNFTWithIndex {
+  id: string;
+  nft: NFT;
+  hiddenAt: Date;
+  vaultIndex: number;
+}
+
 export interface UserVote {
   nftId: string;
   rating: NFTRating;

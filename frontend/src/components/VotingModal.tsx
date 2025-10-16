@@ -1,4 +1,3 @@
-import React from 'react';
 import type { NFT, NFTRating } from '../types/nft';
 import { FaCheckCircle, FaExclamationTriangle, FaExclamationCircle, FaTimes } from 'react-icons/fa';
 
@@ -8,7 +7,7 @@ interface VotingModalProps {
   onClose: () => void;
 }
 
-const VotingModal: React.FC<VotingModalProps> = ({ nft, onVote, onClose }) => {
+const VotingModal = ({ nft, onVote, onClose }: VotingModalProps) => {
   const handleVote = (rating: NFTRating) => {
     onVote(nft.id, rating);
   };

@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaEye, FaSpinner } from 'react-icons/fa';
 import { ConnectButton } from '@mysten/dapp-kit';
 
@@ -10,7 +9,7 @@ interface HeaderProps {
   error?: string | null;
 }
 
-const Header: React.FC<HeaderProps> = ({ onToggleHiddenPanel, hiddenCount, onRefresh, loading, error }) => {
+const Header = ({ onToggleHiddenPanel, hiddenCount, onRefresh, loading, error }: HeaderProps) => {
   return (
     <header className="bg-black/20 backdrop-blur-sm border-b border-white/10">
       <div className="container mx-auto px-4 py-4">

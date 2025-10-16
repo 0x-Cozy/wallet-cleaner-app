@@ -1,6 +1,5 @@
-import React from 'react';
 import type { HiddenNFT } from '../types/nft';
-import { FaEye, FaTimes, FaLock } from 'react-icons/fa';
+import { FaEye, FaTimes } from 'react-icons/fa';
 
 interface HiddenNFTsPanelProps {
   hiddenNFTs: HiddenNFT[];
@@ -8,7 +7,7 @@ interface HiddenNFTsPanelProps {
   onClose: () => void;
 }
 
-const HiddenNFTsPanel: React.FC<HiddenNFTsPanelProps> = ({ hiddenNFTs, onRemove, onClose }) => {
+const HiddenNFTsPanel = ({ hiddenNFTs, onRemove, onClose }: HiddenNFTsPanelProps) => {
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-US', {
       month: 'short',
@@ -69,11 +68,6 @@ const HiddenNFTsPanel: React.FC<HiddenNFTsPanelProps> = ({ hiddenNFTs, onRemove,
                         <p className="text-gray-400 text-xs">{hiddenNFT.nft.collection}</p>
                       </div>
 
-                      <div className="flex items-center justify-between text-xs text-gray-400">
-                        <span>Hidden: {formatDate(hiddenNFT.hiddenAt)}</span>
-                        <span className="capitalize">{hiddenNFT.nft.rating}</span>
-                      </div>
-
                       <button
                         onClick={() => onRemove(hiddenNFT.id)}
                         className="w-full bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/50 hover:border-blue-400/50 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200"
@@ -94,8 +88,7 @@ const HiddenNFTsPanel: React.FC<HiddenNFTsPanelProps> = ({ hiddenNFTs, onRemove,
                     </p>
                   </div>
                   <div className="text-right">
-                    <FaLock className="text-2xl text-yellow-400" />
-                    <div className="text-xs text-gray-400">Safe Storage</div>
+                    <div className="text-xs text-gray-400">Safely Hidden in your vault (still in your wallet)</div>
                   </div>
                 </div>
               </div>

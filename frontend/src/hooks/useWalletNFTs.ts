@@ -1,6 +1,7 @@
-import { useSuiClient, useCurrentAccount } from '@mysten/dapp-kit';
+import { useCurrentAccount, useSuiClient } from '@mysten/dapp-kit';
 import { useState, useEffect } from 'react';
 import type { NFT } from '../types/nft';
+import truncateString from '../helpers/utils';
 
 export const useWalletNFTs = () => {
   const client = useSuiClient();
@@ -19,6 +20,8 @@ export const useWalletNFTs = () => {
       setLoading(true);
       setError(null);
 
+      console.log('Fetching NFTs for address:', account.address);
+      
       const objects = await client.getOwnedObjects({
         owner: account.address,
         options: {
@@ -28,6 +31,7 @@ export const useWalletNFTs = () => {
         }
       });
 
+      console.log('Total objects found:', objects.data.length);
       const walletNFTs: NFT[] = [];
 
       for (const object of objects.data) {
@@ -36,37 +40,35 @@ export const useWalletNFTs = () => {
           const display = object.data.display as any;
           const type = object.data.type;
           
-          //check if it's a n nft object with display
-          const hasDisplayData = display?.data && (
-            display.data.name || 
-            display.data.image_url || 
-            display.data.description
-          );
+          console.log('Object type:', type);
+          console.log('Has display data:', display?.data);
+          console.log('Content fields:', content?.fields);
           
-          const isNFTType = type?.includes('nft') || 
-                           type?.includes('NFT') || 
-                           type?.includes('collectible') ||
-                           type?.includes('token');
           
-          if (hasDisplayData || isNFTType) {
+          const isVaultObject = type?.includes('vault::Vault');
+          const isCoinObject = type?.includes('coin::Coin');
+          
+          if (!isVaultObject && !isCoinObject) {
             const nft: NFT = {
               id: object.data.objectId,
-              name: display?.data?.name || 
+              name: String(display?.data?.name || 
                     content?.fields?.name || 
                     content?.fields?.title ||
-                    'Unknown NFT',
-              image: display?.data?.image_url || 
+                    truncateString(String(type))),
+              image: String(display?.data?.image_url || 
                      content?.fields?.image_url || 
                      content?.fields?.image ||
-                     '/images/img.png',
-              description: display?.data?.description || 
+                     '/images/img.png'),
+              description: String(display?.data?.description || 
                           content?.fields?.description || 
                           content?.fields?.desc ||
-                          'No description',
-              collection: display?.data?.collection || 
+                          'No description'),
+              collection: String(display?.data?.collection || 
                          content?.fields?.collection || 
                          content?.fields?.series ||
-                         'Unknown Collection',
+                         truncateString(String(content?.fields?.package)) ||
+                         truncateString(String(type)) ||
+                         'Unknown Collection'),
               rating: 'legit',
               userVotes: {
                 legit: 0,
@@ -80,6 +82,7 @@ export const useWalletNFTs = () => {
         }
       }
 
+      console.log('Found NFTs:', walletNFTs.length, walletNFTs);
       setNfts(walletNFTs);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch NFTs');

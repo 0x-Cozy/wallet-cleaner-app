@@ -1,4 +1,3 @@
-import React from 'react';
 import type { NFT, NFTRating } from '../types/nft';
 import { FaCheckCircle, FaExclamationTriangle, FaExclamationCircle, FaCheck } from 'react-icons/fa';
 import NFTCard from './NFTCard';
@@ -10,7 +9,7 @@ interface NFTGridProps {
   onBurn: (nft: NFT) => void;
 }
 
-const NFTGrid: React.FC<NFTGridProps> = ({ nfts, onVote, onHide, onBurn }) => {
+const NFTGrid = ({ nfts, onVote, onHide, onBurn }: NFTGridProps) => {
   const getRatingColor = (rating: NFTRating) => {
     switch (rating) {
       case 'legit':
@@ -40,9 +39,14 @@ const NFTGrid: React.FC<NFTGridProps> = ({ nfts, onVote, onHide, onBurn }) => {
   if (nfts.length === 0) {
     return (
       <div className="text-center py-16">
-        <FaCheck className="text-6xl mb-4 mx-auto text-green-400" />
-        <h3 className="text-2xl font-bold text-white mb-2">All Clean!</h3>
-        <p className="text-gray-400">No NFTs to review at the moment.</p>
+        <div className="bg-gray-800/50 backdrop-blur-sm border border-white/10 rounded-2xl p-12 max-w-2xl mx-auto">
+          <FaCheck className="text-6xl mb-4 mx-auto text-green-400" />
+          <h3 className="text-2xl font-bold text-white mb-2">All Clean!</h3>
+          <p className="text-gray-400 mb-4">No NFTs found in your wallet.</p>
+          <p className="text-gray-500 text-sm">
+            If you have NFTs but don't see them here, try refreshing or check if they have display data.
+          </p>
+        </div>
       </div>
     );
   }

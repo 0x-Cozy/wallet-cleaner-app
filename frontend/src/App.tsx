@@ -1,24 +1,64 @@
-import { useState } from 'react';
-import type { NFT, NFTRating, HiddenNFT } from './types/nft';
+import { useState, useEffect } from 'react';
+import type { NFT, NFTRating } from './types/nft';
 import { useCurrentAccount, ConnectButton } from '@mysten/dapp-kit';
 import { useWalletNFTs } from './hooks/useWalletNFTs';
+import { useVault } from './hooks/useVault';
+import { useBurnNFT } from './helpers/sui';
 import { FaWallet } from 'react-icons/fa';
 import Header from './components/Header';
 import NFTGrid from './components/NFTGrid';
 import HiddenNFTsPanel from './components/HiddenNFTsPanel';
 import VotingModal from './components/VotingModal';
+import BurnConfirmModal from './components/BurnConfirmModal';
 
 
 function App() {
   const account = useCurrentAccount();
   const { nfts: walletNFTs, loading, error, refetch } = useWalletNFTs();
-  const [hiddenNFTs, setHiddenNFTs] = useState<HiddenNFT[]>([]);
+  const { burnNFT, isPending: isBurning } = useBurnNFT();
+  const { 
+    hiddenNFTs: vaultHiddenNFTs, 
+    loading: vaultLoading, 
+    error: vaultError,
+    hideNFTInVault,
+    unhideNFTFromVault,
+    createVaultForUser,
+    isCreatingVault,
+    hasVault,
+    refreshHiddenNFTs
+  } = useVault();
+  
   const [selectedNFT, setSelectedNFT] = useState<NFT | null>(null);
   const [showVotingModal, setShowVotingModal] = useState(false);
   const [showHiddenPanel, setShowHiddenPanel] = useState(false);
-  const [showWalletModal, setShowWalletModal] = useState(false);
+  const [showBurnModal, setShowBurnModal] = useState(false);
+  const [nftToBurn, setNftToBurn] = useState<NFT | null>(null);
 
   const displayNFTs = account ? walletNFTs : [];
+
+  useEffect(() => {
+    const handleNFTHidden = () => {
+      setTimeout(() => {
+        refreshHiddenNFTs();
+        refetch();
+      }, 2000);
+    };
+
+    const handleNFTUnhidden = () => {
+      setTimeout(() => {
+        refreshHiddenNFTs();
+        refetch();
+      }, 2000);
+    };
+
+    window.addEventListener('nftHidden', handleNFTHidden);
+    window.addEventListener('nftUnhidden', handleNFTUnhidden);
+
+    return () => {
+      window.removeEventListener('nftHidden', handleNFTHidden);
+      window.removeEventListener('nftUnhidden', handleNFTUnhidden);
+    };
+  }, [refreshHiddenNFTs, refetch]);
 
   const handleVote = (nftId: string, rating: NFTRating) => {
     // backend servie for voting
@@ -27,35 +67,53 @@ function App() {
     setSelectedNFT(null);
   };
 
-  const handleHide = (nft: NFT) => {
-    if (account) {
-      // move contract interaction for hiding
-      console.log('Hiding wallet NFT:', nft);
-    } else {
-      const hiddenNFT: HiddenNFT = {
-        id: `hidden_${nft.id}_${Date.now()}`,
-        nft,
-        hiddenAt: new Date()
-      };
-      setHiddenNFTs(prev => [...prev, hiddenNFT]);
+  const handleHide = async (nft: NFT) => {
+    if (account && hasVault) {
+      hideNFTInVault(nft.id);
+      setTimeout(() => {
+        refreshHiddenNFTs();
+        refetch(); // Also refresh wallet NFTs
+      }, 3000);
+    } else if (account && !hasVault) {
+      // Create vault firstthen hide the NFT
+      createVaultForUser(() => {
+        hideNFTInVault(nft.id);
+        setTimeout(() => {
+          refreshHiddenNFTs();
+          refetch();
+        }, 3000);
+      });
     }
   };
 
   const handleBurn = (nft: NFT) => {
-    if (account) {
-      // burning interaction or sending to 0x0
-      console.log('Burning wallet NFT:', nft);
-    } else {
-      console.log('Burning NFT:', nft);
-    }
+    setNftToBurn(nft);
+    setShowBurnModal(true);
   };
 
-  const handleRemoveFromHidden = (hiddenNFTId: string) => {
-    const hiddenNFT = hiddenNFTs.find(h => h.id === hiddenNFTId);
-    if (hiddenNFT) {
-      setHiddenNFTs(prev => prev.filter(h => h.id !== hiddenNFTId));
-      // move contract interaction for unhiding
-      console.log('Removing from hidden:', hiddenNFT.nft);
+  const confirmBurn = () => {
+    if (!nftToBurn) return;
+
+    burnNFT(nftToBurn.id);
+    setShowBurnModal(false);
+    setNftToBurn(null);
+  };
+
+  const cancelBurn = () => {
+    setShowBurnModal(false);
+    setNftToBurn(null);
+  };
+
+  const handleRemoveFromHidden = async (hiddenNFTId: string) => {
+    if (hasVault && vaultHiddenNFTs.length > 0) {
+      const hiddenNFT = vaultHiddenNFTs.find(nft => nft.id === hiddenNFTId);
+      if (hiddenNFT) {
+        unhideNFTFromVault(hiddenNFT.vaultIndex);
+        setTimeout(() => {
+          refreshHiddenNFTs();
+          refetch(); // Also refresh wallet NFTs
+        }, 3000);
+      }
     }
   };
 
@@ -66,13 +124,13 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">
-      <Header 
-        onToggleHiddenPanel={() => setShowHiddenPanel(!showHiddenPanel)}
-        hiddenCount={hiddenNFTs.length}
-        onRefresh={refetch}
-        loading={loading}
-        error={error}
-      />
+            <Header
+              onToggleHiddenPanel={() => setShowHiddenPanel(!showHiddenPanel)}
+              hiddenCount={vaultHiddenNFTs.length}
+              onRefresh={refetch}
+              loading={loading || vaultLoading || isCreatingVault}
+              error={error || vaultError}
+            />
       
       <main className="container mx-auto px-4 py-8">
         {!account ? (
@@ -100,19 +158,33 @@ function App() {
           />
         )}
 
-        {showHiddenPanel && (
-          <HiddenNFTsPanel 
-            hiddenNFTs={hiddenNFTs}
-            onRemove={handleRemoveFromHidden}
-            onClose={() => setShowHiddenPanel(false)}
-          />
-        )}
+               {showHiddenPanel && (
+                 <HiddenNFTsPanel
+                   hiddenNFTs={vaultHiddenNFTs.map(nft => ({
+                     id: nft.id,
+                     nft: nft.nft,
+                     hiddenAt: nft.hiddenAt
+                   }))}
+                   onRemove={handleRemoveFromHidden}
+                   onClose={() => setShowHiddenPanel(false)}
+                 />
+               )}
 
         {showVotingModal && selectedNFT && (
           <VotingModal 
             nft={selectedNFT}
             onVote={handleVote}
             onClose={() => setShowVotingModal(false)}
+          />
+        )}
+
+        {showBurnModal && nftToBurn && (
+          <BurnConfirmModal 
+            nft={nftToBurn}
+            isOpen={showBurnModal}
+            onConfirm={confirmBurn}
+            onCancel={cancelBurn}
+            loading={isBurning}
           />
         )}
       </main>

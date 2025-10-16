@@ -11,14 +11,14 @@ interface NFTCardProps {
   ratingIcon: React.ReactNode;
 }
 
-const NFTCard: React.FC<NFTCardProps> = ({ 
+const NFTCard = ({ 
   nft, 
   onVote, 
   onHide, 
   onBurn, 
   ratingColor, 
   ratingIcon 
-}) => {
+}: NFTCardProps) => {
   const getTotalVotes = () => {
     return nft.userVotes.legit + nft.userVotes.suspicious + nft.userVotes.scam;
   };
