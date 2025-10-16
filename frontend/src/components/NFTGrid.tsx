@@ -7,9 +7,10 @@ interface NFTGridProps {
   onVote: (nft: NFT) => void;
   onHide: (nft: NFT) => void;
   onBurn: (nft: NFT) => void;
+  isCreatingVault?: boolean;
 }
 
-const NFTGrid = ({ nfts, onVote, onHide, onBurn }: NFTGridProps) => {
+const NFTGrid = ({ nfts, onVote, onHide, onBurn, isCreatingVault = false }: NFTGridProps) => {
   const getRatingColor = (rating: NFTRating) => {
     switch (rating) {
       case 'legit':
@@ -83,6 +84,7 @@ const NFTGrid = ({ nfts, onVote, onHide, onBurn }: NFTGridProps) => {
             onBurn={() => onBurn(nft)}
             ratingColor={getRatingColor(nft.rating)}
             ratingIcon={getRatingIcon(nft.rating)}
+            isCreatingVault={isCreatingVault}
           />
         ))}
       </div>

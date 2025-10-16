@@ -9,6 +9,7 @@ interface NFTCardProps {
   onBurn: () => void;
   ratingColor: string;
   ratingIcon: React.ReactNode;
+  isCreatingVault?: boolean;
 }
 
 const NFTCard = ({ 
@@ -17,7 +18,8 @@ const NFTCard = ({
   onHide, 
   onBurn, 
   ratingColor, 
-  ratingIcon 
+  ratingIcon,
+  isCreatingVault = false
 }: NFTCardProps) => {
   const getTotalVotes = () => {
     return nft.userVotes.legit + nft.userVotes.suspicious + nft.userVotes.scam;
@@ -95,9 +97,14 @@ const NFTCard = ({
           </button>
           <button
             onClick={onHide}
-            className="flex-1 bg-yellow-600/20 hover:bg-yellow-600/30 text-yellow-400 border border-yellow-500/50 hover:border-yellow-400/50 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+            disabled={isCreatingVault}
+            className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              isCreatingVault
+                ? 'bg-gray-600/20 text-gray-400 border border-gray-500/50 cursor-not-allowed'
+                : 'bg-yellow-600/20 hover:bg-yellow-600/30 text-yellow-400 border border-yellow-500/50 hover:border-yellow-400/50'
+            }`}
           >
-            Hide
+            {isCreatingVault ? 'Creating Vault...' : 'Hide'}
           </button>
           <button
             onClick={onBurn}

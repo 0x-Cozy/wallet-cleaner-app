@@ -69,13 +69,29 @@ export const useVault = () => {
       return;
     }
 
+    if (isCreatingVault) {
+      return; // Prevent multiple vault creations
+    }
+
     createVault();
     
-    setTimeout(() => {
+    setTimeout(async () => {
+      let attempts = 0;
+      const maxAttempts = 5;
+      
+      while (attempts < maxAttempts) {
+        await checkVault();
+        if (vaultId) {
+          break;
+        }
+        attempts++;
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+      
       if (onSuccess) {
         onSuccess();
       }
-    }, 3000);
+    }, 2000);
   };
 
   const refreshHiddenNFTs = async () => {

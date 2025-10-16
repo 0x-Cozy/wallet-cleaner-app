@@ -74,8 +74,7 @@ function App() {
         refreshHiddenNFTs();
         refetch(); // Also refresh wallet NFTs
       }, 3000);
-    } else if (account && !hasVault) {
-      // Create vault firstthen hide the NFT
+    } else if (account && !hasVault && !isCreatingVault) {
       createVaultForUser(() => {
         hideNFTInVault(nft.id);
         setTimeout(() => {
@@ -150,11 +149,12 @@ function App() {
             </div>
           </div>
         ) : (
-          <NFTGrid 
+          <NFTGrid
             nfts={displayNFTs}
             onVote={openVotingModal}
             onHide={handleHide}
             onBurn={handleBurn}
+            isCreatingVault={isCreatingVault}
           />
         )}
 
